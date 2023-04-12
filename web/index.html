@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Raytracer</title>
+    <link rel="shortcut icon" type="image/jpg" href="favicon.png" />
+    <style>
+      @font-face {
+        font-family: PressStart2P;
+        src: url("./Press_Start_2P/PressStart2P-Regular.ttf");
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: PressStart2P;
+        background-color: black;
+      }
+      #container {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #canvas {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        background-color: black;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-crisp-edges;
+        image-rendering: pixelated;
+      }
+      #title {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-size: 2em;
+        font-weight: bold;
+        color: #f45050;
+        padding: 1rem;
+        -webkit-text-fill-color: #ffdd0b;
+        -webkit-text-stroke: 1px;
+        text-transform: uppercase;
+        opacity: 0.8;
+      }
+
+      #controls {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
+        background-color: #ffffffc0;
+        backdrop-filter: blur(2px);
+        border-radius: 8px;
+      }
+      input[type="number"] {
+        width: 60px;
+        padding: 5px;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+      input[type="range"] {
+        width: 70%;
+        margin-left: 0.5rem;
+      }
+
+      .input-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 0.5rem;
+      }
+
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+      }
+      label {
+        font-size: 0.8em;
+      }
+
+      #frame-time-box {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0.5rem;
+        font-size: 0.5em;
+        background-color: #ffffffc0;
+        backdrop-filter: blur(2px);
+        border-radius: 8px;
+      }
+      @media only screen and (max-width: 460px) {
+        #frame-time-box {
+          top: 70px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <canvas id="canvas"></canvas>
+      <h1 id="title">Raytracer!</h1>
+      <div id="frame-time-box">
+        <p style="padding-bottom: 0.2rem">Frame Time</p>
+        <p><span id="frame-time">--</span> ms</p>
+      </div>
+      <div id="controls">
+        <div class="input-container">
+          <div class="input-box">
+            <label for="resolution">Resolution</label>
+            <input
+              type="range"
+              id="resolution"
+              min="-3"
+              max="1"
+              step="0.25"
+              value="-0.5"
+            />
+          </div>
+          <div class="input-box">
+            <label for="fov">FOV</label>
+            <input
+              type="range"
+              id="fov"
+              min="25"
+              max="100"
+              step="5"
+              value="80"
+            />
+          </div>
+          <div class="input-box">
+            <label for="supersampling">Supersampling (5x)</label>
+            <input type="checkbox" id="supersampling" value="1" />
+          </div>
+        </div>
+        <div class="input-container">
+          <label for="camera-x">Camera Position</label>
+          <div class="input-box">
+            <input type="number" id="camera-x" value="0" step="0.2" />
+            <input type="number" id="camera-y" value="0" step="0.2" />
+            <input type="number" id="camera-z" value="0" step="0.2" />
+          </div>
+        </div>
+        <div class="input-container">
+          <label for="rotate-x">Camera Rotation</label>
+          <div class="input-box" style="padding-top: 0.2rem">
+            <label for="rotate-x" style="font-size: 0.5em">X axis</label>
+            <input type="range" id="rotate-x" min="-60" max="60" value="0" />
+          </div>
+          <div class="input-box" style="padding-top: 0.2rem">
+            <label for="rotate-y" style="font-size: 0.5em">Y axis</label>
+            <input type="range" id="rotate-y" min="-60" max="60" value="0" />
+          </div>
+          <div class="input-box" style="padding-top: 0.2rem">
+            <label for="rotate-z" style="font-size: 0.5em">Z axis</label>
+            <input type="range" id="rotate-z" min="-90" max="90" value="0" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="pkg/web.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
