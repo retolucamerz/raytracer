@@ -1,15 +1,14 @@
-use raytracer::camera::*;
 use raytracer::color::*;
-use raytracer::primitives::*;
 use raytracer::sampling::*;
-use raytracer::scene::*;
 use raytracer::structs::*;
-use std::f32::consts::PI;
 use wasm_bindgen::prelude::*;
 
+pub mod scene;
+use scene::*;
+
+// setup memory to be read from JS
 const MAX_WIDTH: usize = 2 * 1920;
 const MAX_HEIGHT: usize = 2 * 1080;
-
 const OUTPUT_BUFFER_SIZE: usize = MAX_WIDTH * MAX_HEIGHT * 4;
 static mut OUTPUT_BUFFER: [u8; OUTPUT_BUFFER_SIZE] = [0; OUTPUT_BUFFER_SIZE];
 
@@ -40,129 +39,11 @@ pub fn generate_image(
     z_rot: Float,
     fov: Float,
     supersampling: bool,
+    t: Float,
 ) {
-    let t: Float = 0.;
-    let light: LightSource = LightSource {
-        pos: Vec3 {
-            x: 5. * t.cos(),
-            y: 4. * t.sin(),
-            z: 0.,
-        },
-        color: Color {
-            r: 1.,
-            g: 1.,
-            b: 1.,
-            a: 1.,
-        },
-    };
-
-    let reflective_options = ShadingOptions {
-        base_color: COLOR_GREEN,
-        ambiant_part: 0.2,
-        diffuse_part: 0.4,
-        specular_part: 0.,
-        specular_coefficient: 4.,
-        reflective_part: 0.4,
-        refraction_index: 0.,
-    };
-    let big_sphere: Sphere = Sphere {
-        center: Vec3 {
-            x: 0.,
-            y: 0.,
-            z: 5.,
-        },
-        radius: 1.,
-        options: ShadingOptions {
-            base_color: COLOR_BLUE,
-            ..OPTIONS
-        },
-    };
-    let small_sphere: Sphere = Sphere {
-        center: Vec3 {
-            x: 0.,
-            y: 0.,
-            z: 4. + 0.5 * t.sin(),
-        },
-        radius: 0.3,
-        options: ShadingOptions {
-            base_color: COLOR_RED,
-            ..reflective_options
-        },
-    };
-    let sphere1: Sphere = Sphere {
-        center: Vec3 {
-            x: 1.15 * t.cos(),
-            y: 1.15 * t.sin(),
-            z: 4.1,
-        },
-        radius: 0.3,
-        options: reflective_options,
-    };
-    let sphere2: Sphere = Sphere {
-        center: Vec3 {
-            x: 1.15 * (t + 2. * PI / 3.).cos(),
-            y: 1.15 * (t + 2. * PI / 3.).sin(),
-            z: 4.1,
-        },
-        radius: 0.3,
-        options: reflective_options,
-    };
-    let sphere3: Sphere = Sphere {
-        center: Vec3 {
-            x: 1.15 * (t + 4. * PI / 3.).cos(),
-            y: 1.15 * (t + 4. * PI / 3.).sin(),
-            z: 4.1,
-        },
-        radius: 0.3,
-        options: reflective_options,
-    };
-    let checkerboard1: Checkerboard = Checkerboard {
-        axis: Axis::ZAxis,
-        pos: Vec3 {
-            x: 0.,
-            y: 0.,
-            z: 5.,
-        },
-        radius: 2.,
-        grid_size: 0.25,
-        options: WHITE_OPTIONS,
-    };
-    let checkerboard2: Checkerboard = Checkerboard {
-        axis: Axis::ZAxis,
-        pos: Vec3 {
-            x: 0.,
-            y: 0.,
-            z: 0.,
-        },
-        radius: 2.,
-        grid_size: 0.25,
-        options: WHITE_OPTIONS,
-    };
-
-    let scene: Scene = Scene {
-        lights: vec![light],
-        spheres: vec![big_sphere, small_sphere, sphere1, sphere2, sphere3],
-        boards: vec![checkerboard1, checkerboard2],
-    };
-
-    let origin = Vec3 {
-        x: camera_x,
-        y: camera_y,
-        z: 0.5 + camera_z,
-    };
-    let x_direction = (Vec3 {
-        x: 1.,
-        y: 0.,
-        z: 0.,
-    })
-    .rotate(x_rot, y_rot, z_rot);
-    let y_direction = (Vec3 {
-        x: 0.,
-        y: 1.,
-        z: 0.,
-    })
-    .rotate(x_rot, y_rot, z_rot);
-    let camera = Camera::create(origin, x_direction, y_direction, fov, width, height);
+    let (scene, camera) = render_scene(
+        camera_x, camera_y, camera_z, x_rot, y_rot, z_rot, fov, width, height, t,
+    );
 
     let sample_grid: &[(Float, Float)] = if supersampling {
         &SAMPLE_GRID_5

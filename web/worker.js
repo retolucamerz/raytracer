@@ -22,7 +22,9 @@ self.onmessage = async (msg) => {
     rotate_x,
     rotate_y,
     rotate_z,
+    t,
   } = msg.data;
+
   rustWasm.generate_image(
     width,
     height,
@@ -37,7 +39,8 @@ self.onmessage = async (msg) => {
     rotate_y,
     rotate_z,
     fov,
-    supersampling
+    supersampling,
+    t
   );
   const wasmByteMemoryArray = new Uint8Array(rustWasm.memory.buffer);
   const outputPointer = rustWasm.get_output_buffer_pointer();
