@@ -31,7 +31,7 @@ let renderingInput = false; // if scene is actively rerendered due to input
 let pastTimestamp = null; // only non-null when animation is running
 let animationTime = 0;
 
-async function render(timestamp) {
+function render(timestamp) {
   let start = new Date().getTime();
 
   if (animating) {
@@ -177,9 +177,6 @@ function playPause() {
 
 document.querySelector("#resolution").addEventListener("mousedown", startInput);
 document.querySelector("#fov").addEventListener("mousedown", startInput);
-document
-  .querySelector("#supersampling")
-  .addEventListener("mousedown", startInput);
 document.querySelector("#camera-x").addEventListener("mousedown", startInput);
 document.querySelector("#camera-y").addEventListener("mousedown", startInput);
 document.querySelector("#camera-z").addEventListener("mousedown", startInput);
@@ -196,3 +193,8 @@ document.querySelector("#camera-z").addEventListener("mouseup", endInput);
 document.querySelector("#rotate-x").addEventListener("mouseup", endInput);
 document.querySelector("#rotate-y").addEventListener("mouseup", endInput);
 document.querySelector("#rotate-z").addEventListener("mouseup", endInput);
+
+document.querySelector("#supersampling").addEventListener("change", () => {
+  startInput();
+  endInput();
+});
